@@ -2,7 +2,7 @@
 
 适用于`React Native`的输入框组件。
 
-![效果图](screenshot.png)
+![效果图](https://raw.githubusercontent.com/anhulife/react-native-input2/master/screenshot.png)
 
 ## 特性
 
