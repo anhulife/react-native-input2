@@ -1,0 +1,12 @@
+{
+  "name": "react-native-input2",
+  "version": "0.0.1",
+  "description": "Customizable input for react-native",
+  "author": "anhulife <anhulife@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "react-native",
+    "input",
+    "autocomplete"
+  ]
+}
