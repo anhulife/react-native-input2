@@ -4,7 +4,7 @@ import {
   View,
 } from 'react-native';
 
-import Input2 from './Input2';
+import Input2 from 'react-native-input2';
 
 const domainList = [
   '126.com',

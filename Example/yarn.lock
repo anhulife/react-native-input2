@@ -3813,6 +3813,10 @@ react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "http://registry.npm.taobao.org/react-deep-force-update/download/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
 
+"react-native-input2@git+https://github.com/anhulife/react-native-input2.git":
+  version "0.0.1"
+  resolved "git+https://github.com/anhulife/react-native-input2.git#6b3317b218ae4255645a9a555a65bc2f284abfc3"
+
 react-native@0.38.1:
   version "0.38.1"
   resolved "http://registry.npm.taobao.org/react-native/download/react-native-0.38.1.tgz#7e4b2038a7caf0608c8b7efdde662286d8433df3"

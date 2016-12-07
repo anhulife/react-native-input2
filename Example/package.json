@@ -8,7 +8,8 @@
 	},
 	"dependencies": {
 		"react": "~15.4.0-rc.4",
-		"react-native": "0.38.1"
+		"react-native": "0.38.1",
+    "react-native-input2": "git+https://github.com/anhulife/react-native-input2.git"
 	},
 	"devDependencies": {
 		"babel-jest": "17.0.2",
