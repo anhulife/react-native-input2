@@ -1,8 +1,9 @@
 {
   "name": "react-native-input2",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Customizable input for react-native",
   "author": "anhulife <anhulife@gmail.com>",
+  "repository": "anhulife/react-native-input2",
   "license": "MIT",
   "keywords": [
     "react-native",
