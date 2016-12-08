@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
 | prependSlot                 | Node     | 添加在输入框前面的节点，比如：`<Text>Hello</Text>` |
 | appendSlot                  | Node     | 添加在输入框后面的节点，比如：`<Text>world</Text>` |
 | styles                      | Object   | 自定义的样式                              |
+| 其他属性                        |          | 其他属性都会传递给组件内的`TextInput`组件          |
 
 ### suggestions
 
