@@ -11,92 +11,188 @@
 3. 扩展左右两端
 4. 自定义样式
 
-## 输入建议
+## 安装
 
-启用输入建议很简单，只需要提供两个属性：`fetchSuggestions`和`onSelect`。
-
-```react
-<Input2
-  value={this.state.value}
-  onChangeText={text => this.setState({ value: text })}
-  fetchSuggestions={text => (['anhulife@126.com', 'anhulife@163.com', ...])}
-  onSelect={selected => this.setState({ value: selected })}
- />
+```shell
+npm install react-native-input2 --save
 ```
 
-每当文本输入框有内容变化时，`Input2`就会调用`fetchSuggestions`获取建议数组并渲染建议列表，当用户选择了建议列表中的其中一项，`Input2`就会将用户的选择项传入`onSelect`函数。
-
-`fetchSuggestions`支持异步返回结果，只需要返回`thenable`对象或`Promise`实例即可。
-
-`fetchSuggestions`返回的数组中每一项，可以是字符串也可以是对象。如果返回的是包含对象的数组，那么`onSelect`传入的参数也是对象。
-
-建议列表中每个条目也可以自定义，使用`customItem(item, handleSelect)`即可。下面是默认的设置。
+## 使用实例
 
 ```react
-(item, handleSelect) => (
-  <TouchableWithoutFeedback onPress={handleSelect}>
-    <View style={[styles.suggestion, userStyles.suggestion]}>
-      <Text
-        ellipsizeMode="middle"
-        numberOfLines={1}
-        style={[styles.suggestionText, userStyles.suggestionText]}
-      >
-        {item.value || item}
-      </Text>
-    </View>
-  </TouchableWithoutFeedback>
-)
-```
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
 
+import Input2 from 'react-native-input2';
 
+const domainList = [
+  '126.com',
+  '163.com',
+  'apple.com',
+  'gmail.com',
+  'hotmail.com',
+];
 
-## 清空输入
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-当用户在输入内容的时候，输入框右边会出现一个清空按钮，点击即可清空输入。想启用这个功能，也只需要提供两个属性：`showClearButton`和`onClear`。
+    this.state = {
+      // 输入框的值
+      value: '',
+      // 建议列表
+      mailSuggestions: [],
+    };
+  }
 
-```react
-<Input2
-  value={this.state.value}
-  onChangeText={text => this.setState({ value: text })}
-  showClearButton={!!this.state.value}
-  onClear={() => this.setState({ value: '' })}
-/>
-```
+  getMailSuggestions(text) {
+    const info = text.split('@');
+    let mailSuggestions;
 
-当输入框聚焦并且`showClearButton`为`true`时，清空按钮就会出现，`onClear`会在用户点击清空按钮时调用。
+    if (!info[0]) {
+      mailSuggestions = ['anhulife@gmail.com'];
+    } else {
+      const domainSuggestions = domainList.filter(domain => domain.startsWith(info[1] || ''));
+      mailSuggestions = domainSuggestions.map(domain => `${info[0]}@${domain}`);
+    }
 
-## 扩展左右两端
+    this.setState(Object.assign({}, this.state, {
+      mailSuggestions,
+    }));
+  }
 
-如果需要在输入框的左边或右边追加别的内容，只需要传递`prependSlot`和`appendSlot`属性即可，这两个属性对应值的是可渲染的内容。
+  changeValue(value) {
+    this.setState(Object.assign({}, this.state, { value }));
+  }
 
-```react
-<Input2
-  value={this.state.value}
-  onChangeText={text => this.setState({ value: text })}
-  prependSlot={<Text>Hello</Text>}
-  appendSlot={<Text>Hello</Text>}
-/>
-```
+  handleSelect(selected) {
+    this.input.blur();
 
-## 自定义样式
+    this.changeValue(selected);
+  }
 
-整个输入框组件都可以自定义样式，通过属性`styles`即可完成。
+  render() {
+    const { value, mailSuggestions } = this.state;
 
-```javascript
+    return (
+      <View style={styles.container}>
+        <Input2
+          ref={ref => (this.input = ref)}
+          placeholder="Email"
+          value={value}
+          autoCapitalize="none"
+          autoCorrect={false}
+          suggestions={mailSuggestions}
+          showClearButton={!!value}
+          onClear={() => this.changeValue('')}
+          onChangeText={text => this.changeValue(text)}
+          onSuggestionsFetchRequested={text => this.getMailSuggestions(text)}
+          onSuggestionSelected={selected => this.handleSelect(selected)}
+        />
+      </View>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
+    padding: 30,
   },
 });
-
-<Input2
-  value={this.state.value}
-  onChangeText={text => this.setState({ value: text })}
-  styles={styles}
-/>
 ```
 
-以下是组件的默认样式。
+## 属性
+
+| 属性                          | 类型       | 描述                                  |
+| --------------------------- | -------- | ----------------------------------- |
+| suggestions                 | Array    | 被展示出来的建议数组                          |
+| onSuggestionsFetchRequested | Function | 需要更新建议列表时会调用该函数                     |
+| onSuggestionSelected        | Function | 用户选择建议列表中的一项时会调用该函数                 |
+| renderSuggestion            | Function | 自定义的建议项渲染函数，可选                      |
+| showClearButton             | Boolean  | 是否显示清空按钮                            |
+| onClear                     | Function | 用户点击清空按钮时会调用该                       |
+| prependSlot                 | Node     | 添加在输入框前面的节点，比如：`<Text>Hello</Text>` |
+| appendSlot                  | Node     | 添加在输入框后面的节点，比如：`<Text>world</Text>` |
+| styles                      | Object   | 自定义的样式                              |
+
+### suggestions
+
+建议数组。目前只要求`suggestions`是一个数组，至于数组内的内容并不做强制要求。
+
+最简单的情况是`suggestions`数组里都是字符串，比如：
+
+```javascript
+const suggestions = [
+  'anhulife@126.com',
+  'anhulife@163.com',
+];
+```
+
+另外一个情况是`suggestions`数组里都是简单对象，只需要对象中包含`label`属性即可，因为在展示建议项时会使用`label`属性，比如：
+
+```javascript
+const suggestions = [
+  {
+    domain: '126.com',
+    label: 'anhulife@126.com',
+  },
+  {
+    domain: '163.com',
+    label: 'anhulife@163.com',
+  },
+];
+```
+
+### onSuggestionsFetchRequested
+
+目前这个函数会在输入框聚焦和值变化时调用，它的定义如下：
+
+```javascript
+function onSuggestionsFetchRequested(value)
+```
+
+参数`value`是当前输入框的值。
+
+### onSuggestionSelected
+
+当用户选择了某一个建议项后会调用该函数，它的定义如下：
+
+```javascript
+function onSuggestionSelected(selected)
+```
+
+参数`selected`是用户选择的建议项，也就是`suggestions`数组中的一项。
+
+### renderSuggestion
+
+用于自定义建议项的渲染函数，它是可选的，默认的如下：
+
+```react
+renderSuggestion(item, handleSelect) {
+  const { styles: userStyles } = this.props;
+
+  return (
+    <TouchableWithoutFeedback onPress={handleSelect}>
+      <View style={[styles.suggestion, userStyles.suggestion]}>
+        <Text
+          ellipsizeMode="middle"
+          numberOfLines={1}
+          style={[styles.suggestionText, userStyles.suggestionText]}
+        >
+          {item.label || item}
+        </Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+```
+
+### styles
+
+用于覆盖默认样式的，必须是`StyleSheet`创建的实例，默认的样式如下：
 
 ```javascript
 const pixelDensity = PixelRatio.get();
@@ -151,6 +247,7 @@ const styles = StyleSheet.create({
 
   // 建议项之间的分隔符
   suggestionSeparator: {
+    // height: onePixel,
     borderBottomWidth: onePixel,
     borderBottomColor: greyColor,
   }

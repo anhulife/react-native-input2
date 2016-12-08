@@ -14,15 +14,17 @@ import {
 const propTypes = {
   // 自定义的样式集
   styles: PropTypes.object,
-  // 自定义的输入建议列表项
-  // customItem(item, handleSelect)
-  customItem: PropTypes.func,
-  // 获取输入列表项的建议列表
-  // fetchSuggestions(text)
-  fetchSuggestions: PropTypes.func,
-  // 选择建议项的事件回调
-  // onSelect(selected)
-  onSelect: PropTypes.func,
+  // 建议列表
+  suggestions: PropTypes.array,
+  // 自定义建议列表项的渲染函数
+  // renderSuggestion(item, handleSelect)
+  renderSuggestion: PropTypes.func,
+  // 每当需要更新建议列表时会调用该函数，目前只有当组件实例化和输入框的值变化时才会触发调用
+  // onSuggestionsFetchRequested(text)
+  onSuggestionsFetchRequested: PropTypes.func,
+  // 每当用户选择建议列表中的一项时会调用该函数
+  // onSuggestionSelected(selected)
+  onSuggestionSelected: PropTypes.func,
   // 是否显示清空按钮
   showClearButton: PropTypes.bool,
   // 点击清空按钮的事件回调
@@ -44,42 +46,24 @@ export default class Input2 extends Component {
     this.state = {
       // 输入框是否聚焦
       isFocused: false,
-      // 输入建议的数据源
-      suggestionsDataSource: null,
     };
 
-    const { value, defaultValue, fetchSuggestions } = this.props;
+    const { onSuggestionsFetchRequested, value } = this.props;
 
-    if (fetchSuggestions) {
+    if (onSuggestionsFetchRequested) {
       // 创建数据源
       this.suggestionsDataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-      this.fetchSuggestionsByText(value || defaultValue || '');
+      // 初始化时触发获取建议列表事件
+      setImmediate(() => onSuggestionsFetchRequested(value))
     }
   }
 
   componentWillReceiveProps(nextProps) {
     // 文本框的内容变化后，需要重新获取建议列表
     if (this.props.value !== nextProps.value) {
-      this.fetchSuggestionsByText(nextProps.value);
+      nextProps.onSuggestionsFetchRequested(nextProps.value);
     }
-  }
-
-  // 获取建议列表
-  fetchSuggestionsByText(text) {
-    const { fetchSuggestions } = this.props;
-
-    if (!fetchSuggestions) {
-      return;
-    }
-
-    // 获取建议列表
-    Promise.resolve(fetchSuggestions(text))
-      .then(suggestions => {
-        this.setState(Object.assign({}, this.state, {
-          suggestionsDataSource: this.suggestionsDataSource.cloneWithRows(suggestions),
-        }));
-      })
   }
 
   // 处理输入框得到焦点的事件
@@ -138,10 +122,12 @@ export default class Input2 extends Component {
     );
   }
 
+  // 渲染清空按钮
   renderClearButton() {
     const { showClearButton, onClear, styles: userStyles } = this.props;
     const { isFocused } = this.state;
 
+    // 失去焦点或是属性值为 false 时不渲染按钮
     if (!showClearButton || !isFocused) {
       return null;
     }
@@ -156,17 +142,37 @@ export default class Input2 extends Component {
     );
   }
 
+  // 渲染建议列表
   renderSuggestions() {
-    const { onSelect, styles: userStyles } = this.props;
-    const { suggestionsDataSource, isFocused } = this.state;
-    const rowCount = suggestionsDataSource ? suggestionsDataSource.getRowCount(0) : 0;
+    const { suggestions, onSuggestionSelected, styles: userStyles } = this.props;
+    const { isFocused } = this.state;
 
     // 没有建议项或是失去焦点的情况下，不渲染建议列表
-    if (rowCount === 0 || !isFocused ) {
+    if (suggestions.length === 0 || !isFocused ) {
       return null;
     }
 
-    const customItem = this.props.customItem || ((item, handleSelect) => (
+    return (
+      <ListView
+        keyboardShouldPersistTaps
+        style={[styles.suggestions, userStyles.suggestions]}
+        dataSource={this.suggestionsDataSource.cloneWithRows(suggestions)}
+        renderRow={item => this.renderSuggestion(item, () => onSuggestionSelected(item))}
+        renderSeparator={(sectionID, rowID) => this.renderSeparator(rowID)}
+      />
+    );
+  }
+
+  // 渲染建议项
+  renderSuggestion(item, handleSelect) {
+    const { renderSuggestion, styles: userStyles } = this.props;
+
+    // 如果用户传递了自定义的渲染函数就使用用户的
+    if (renderSuggestion) {
+      return renderSuggestion(item, handleSelect);
+    }
+
+    return (
       <TouchableWithoutFeedback onPress={handleSelect}>
         <View style={[styles.suggestion, userStyles.suggestion]}>
           <Text
@@ -174,28 +180,19 @@ export default class Input2 extends Component {
             numberOfLines={1}
             style={[styles.suggestionText, userStyles.suggestionText]}
           >
-            {item.value || item}
+            {item.label || item}
           </Text>
         </View>
       </TouchableWithoutFeedback>
-    ));
-
-    return (
-      <ListView
-        keyboardShouldPersistTaps
-        style={[styles.suggestions, userStyles.suggestions]}
-        dataSource={suggestionsDataSource}
-        renderRow={item => customItem(item, () => onSelect(item))}
-        renderSeparator={(sectionID, rowID) => this.renderSeparator(rowID, rowCount)}
-      />
     );
   }
 
-  renderSeparator(rowID, rowCount) {
-    const { onSelect, styles: userStyles } = this.props;
+  // 渲染建议项之间的分隔符
+  renderSeparator(rowID) {
+    const { suggestions, styles: userStyles } = this.props;
 
     // 最后一行不渲染分隔符
-    if (parseInt(rowID, 10) === rowCount - 1) {
+    if (parseInt(rowID, 10) === suggestions.length - 1) {
       return null;
     }
 

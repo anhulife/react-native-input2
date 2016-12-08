@@ -19,30 +19,41 @@ export default class App extends Component {
     super(props);
 
     this.state = {
+      // 输入框的值
       value: '',
+      // 建议列表
+      mailSuggestions: [],
     };
   }
 
   getMailSuggestions(text) {
     const info = text.split('@');
+    let mailSuggestions;
 
     if (!info[0]) {
-      return ['anhulife@gmail.com'];
+      mailSuggestions = ['anhulife@gmail.com'];
+    } else {
+      const domainSuggestions = domainList.filter(domain => domain.startsWith(info[1] || ''));
+      mailSuggestions = domainSuggestions.map(domain => `${info[0]}@${domain}`);
     }
 
-    const domainSuggestions = domainList.filter(domain => domain.startsWith(info[1] || ''));
+    this.setState(Object.assign({}, this.state, {
+      mailSuggestions,
+    }));
+  }
 
-    return domainSuggestions.map(domain => `${info[0]}@${domain}`);
+  changeValue(value) {
+    this.setState(Object.assign({}, this.state, { value }));
   }
 
   handleSelect(selected) {
     this.input.blur();
 
-    this.setState({ value: selected });
+    this.changeValue(selected);
   }
 
   render() {
-    const { value } = this.state;
+    const { value, mailSuggestions } = this.state;
 
     return (
       <View style={styles.container}>
@@ -52,11 +63,12 @@ export default class App extends Component {
           value={value}
           autoCapitalize="none"
           autoCorrect={false}
+          suggestions={mailSuggestions}
           showClearButton={!!value}
-          onClear={() => this.setState({ value: '' })}
-          onChangeText={text => this.setState({ value: text })}
-          fetchSuggestions={text => this.getMailSuggestions(text)}
-          onSelect={selected => this.handleSelect(selected)}
+          onClear={() => this.changeValue('')}
+          onChangeText={text => this.changeValue(text)}
+          onSuggestionsFetchRequested={text => this.getMailSuggestions(text)}
+          onSuggestionSelected={selected => this.handleSelect(selected)}
         />
       </View>
     );
