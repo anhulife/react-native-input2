@@ -86,7 +86,6 @@ export default class App extends Component {
           autoCapitalize="none"
           autoCorrect={false}
           suggestions={mailSuggestions}
-          showClearButton={!!value}
           onClear={() => this.changeValue('')}
           onChangeText={text => this.changeValue(text)}
           onSuggestionsFetchRequested={text => this.getMailSuggestions(text)}
@@ -112,8 +111,8 @@ const styles = StyleSheet.create({
 | onSuggestionsFetchRequested | Function | 需要更新建议列表时会调用该函数                     |
 | onSuggestionSelected        | Function | 用户选择建议列表中的一项时会调用该函数                 |
 | renderSuggestion            | Function | 自定义的建议项渲染函数，可选                      |
-| showClearButton             | Boolean  | 是否显示清空按钮                            |
-| onClear                     | Function | 用户点击清空按钮时会调用该                       |
+| showClearButton             | Boolean  | 是否显示清空按钮，默认为 true                   |
+| onClear                     | Function | 用户点击清空按钮时会调用该函数                     |
 | prependSlot                 | Node     | 添加在输入框前面的节点，比如：`<Text>Hello</Text>` |
 | appendSlot                  | Node     | 添加在输入框后面的节点，比如：`<Text>world</Text>` |
 | styles                      | Object   | 自定义的样式                              |

@@ -64,7 +64,6 @@ export default class App extends Component {
           autoCapitalize="none"
           autoCorrect={false}
           suggestions={mailSuggestions}
-          showClearButton={!!value}
           onClear={() => this.changeValue('')}
           onChangeText={text => this.changeValue(text)}
           onSuggestionsFetchRequested={text => this.getMailSuggestions(text)}

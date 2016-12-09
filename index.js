@@ -36,6 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  showClearButton: true,
   styles: {},
 };
 
@@ -124,11 +125,11 @@ export default class Input2 extends Component {
 
   // 渲染清空按钮
   renderClearButton() {
-    const { showClearButton, onClear, styles: userStyles } = this.props;
+    const { showClearButton, onClear, value, styles: userStyles } = this.props;
     const { isFocused } = this.state;
 
-    // 失去焦点或是属性值为 false 时不渲染按钮
-    if (!showClearButton || !isFocused) {
+    // 输入框没有值、失去焦点或用户禁止显示按钮时不渲染按钮
+    if (!showClearButton || !isFocused || !value) {
       return null;
     }
 
