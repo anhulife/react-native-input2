@@ -149,7 +149,7 @@ export default class Input2 extends Component {
     const { isFocused } = this.state;
 
     // 没有建议项或是失去焦点的情况下，不渲染建议列表
-    if (suggestions.length === 0 || !isFocused ) {
+    if (!suggestions || suggestions.length === 0 || !isFocused ) {
       return null;
     }
 
