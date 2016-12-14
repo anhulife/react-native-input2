@@ -62,7 +62,7 @@ export default class Input2 extends Component {
 
   componentWillReceiveProps(nextProps) {
     // 文本框的内容变化后，需要重新获取建议列表
-    if (this.props.value !== nextProps.value) {
+    if (this.props.value !== nextProps.value && nextProps.onSuggestionsFetchRequested) {
       nextProps.onSuggestionsFetchRequested(nextProps.value);
     }
   }
