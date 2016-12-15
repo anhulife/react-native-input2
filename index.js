@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import {
   Image,
   ListView,
-  PixelRatio,
   StyleSheet,
   Text,
   TextInput,
@@ -112,6 +111,7 @@ export default class Input2 extends Component {
         <TextInput
           ref={ref => (this.input = ref)}
           style={[styles.input, userStyles.input]}
+          underlineColorAndroid="transparent"
           onFocus={() => this.handleFocus()}
           onBlur={() => this.handleBlur()}
           {...other}
@@ -210,11 +210,10 @@ Input2.defaultProps = defaultProps;
 
 Input2.propTypes = propTypes;
 
-const pixelDensity = PixelRatio.get();
-const fontSize = 32 / pixelDensity;
-const itemHeight = 90 / pixelDensity;
-const onePixel = 1 / pixelDensity;
-const topOffset = 91 / pixelDensity;
+const fontSize = 16;
+const itemHeight = 45;
+const onePixel = 0.5;
+const topOffset = 45.5;
 const greyColor = '#dfdfde';
 
 const styles = StyleSheet.create({
@@ -236,9 +235,9 @@ const styles = StyleSheet.create({
 
   // 清空按钮
   clearButton: {
-    width: 32 / pixelDensity,
-    height: 32 / pixelDensity,
-    margin: 20 / pixelDensity,
+    width: 16,
+    height: 16,
+    margin: 10,
   },
 
   // 建议列表
@@ -262,7 +261,6 @@ const styles = StyleSheet.create({
 
   // 建议项之间的分隔符
   suggestionSeparator: {
-    // height: onePixel,
     borderBottomWidth: onePixel,
     borderBottomColor: greyColor,
   }
