@@ -222,6 +222,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    zIndex: 1,
+    overflow: 'visible',
     borderBottomWidth: onePixel,
     borderBottomColor: greyColor,
   },

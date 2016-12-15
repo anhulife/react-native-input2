@@ -103,6 +103,10 @@ const styles = StyleSheet.create({
 });
 ```
 
+## 已知问题
+
+由于`React Native`在`Android`中暂时没有实现`overflow: visible`特性，所以建议列表在`Android`环境下没有办法展示出来。
+
 ## 属性
 
 | 属性                          | 类型       | 描述                                  |
@@ -195,11 +199,10 @@ renderSuggestion(item, handleSelect) {
 用于覆盖默认样式的，必须是`StyleSheet`创建的实例，默认的样式如下：
 
 ```javascript
-const pixelDensity = PixelRatio.get();
-const fontSize = 32 / pixelDensity;
-const itemHeight = 90 / pixelDensity;
-const onePixel = 1 / pixelDensity;
-const topOffset = 91 / pixelDensity;
+const fontSize = 16;
+const itemHeight = 45;
+const onePixel = 0.5;
+const topOffset = 45.5;
 const greyColor = '#dfdfde';
 
 const styles = StyleSheet.create({
@@ -208,6 +211,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    zIndex: 1,
+    overflow: 'visible',
     borderBottomWidth: onePixel,
     borderBottomColor: greyColor,
   },
@@ -221,9 +226,9 @@ const styles = StyleSheet.create({
 
   // 清空按钮
   clearButton: {
-    width: 32 / pixelDensity,
-    height: 32 / pixelDensity,
-    margin: 20 / pixelDensity,
+    width: 16,
+    height: 16,
+    margin: 10,
   },
 
   // 建议列表
@@ -247,7 +252,6 @@ const styles = StyleSheet.create({
 
   // 建议项之间的分隔符
   suggestionSeparator: {
-    // height: onePixel,
     borderBottomWidth: onePixel,
     borderBottomColor: greyColor,
   }
