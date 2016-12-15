@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
     fontSize,
     height: itemHeight,
     flex: 1,
+    padding: 0,
   },
 
   // 清空按钮
